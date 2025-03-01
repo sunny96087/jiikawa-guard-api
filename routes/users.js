@@ -354,4 +354,73 @@ router.get(
   // #swagger.description = 'google 登入後回傳資料'
 );
 
+/**
+ * 後台管理員登入
+ */
+router.post(
+  "/adminLogin",
+  handleErrorAsync(usersController.adminLogin)
+
+  /**
+    #swagger.tags = ['Users']
+    #swagger.description = '後台管理員登入'
+
+    #swagger.parameters['admin'] = {
+        in: 'body',
+        required: true,
+        schema: {
+            email: {
+                type: 'string',
+                description: '帳號 (電子郵件)',
+                required: true
+            },
+            password: {
+                type: 'string',
+                description: '密碼',
+                required: true
+            }
+        }
+    }
+  */
+);
+
+/**
+ * 使用管理員密碼新增後台管理員帳號
+ */
+router.post(
+  "/adminCreateUser",
+  handleErrorAsync(usersController.adminCreateUser)
+  /**
+    #swagger.tags = ['Users']
+    #swagger.description = '使用管理員密碼新增後台管理員帳號'
+
+    #swagger.parameters['admin'] = {
+        in: 'body',
+        required: true,
+        schema: {
+            email: {
+                type: 'string',
+                description: '帳號 (電子郵件)',
+                required: true
+            },
+            password: {
+                type: 'string',
+                description: '密碼',
+                required: true
+            },
+            name: {
+                type: 'string',
+                description: '名稱',
+                required: true
+            },
+            adminPassword: {
+                type: 'string',
+                description: '管理員密碼',
+                required: true
+            }
+        }
+    }
+  */
+);
+
 module.exports = router;

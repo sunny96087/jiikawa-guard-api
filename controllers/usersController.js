@@ -646,6 +646,73 @@ const usersController = {
     // return res.redirect('http://localhost:3000/');
     // res.redirect('http://localhost:3000/');
   },
+
+  // 後台管理員登入
+  adminLogin: async function (req, res, next) {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(appError(400, "帳號密碼不可為空"));
+    }
+
+    // 檢查 email 是否存在
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return next(appError(400, "帳號不存在"));
+    }
+
+    // 檢查用戶是否已經驗證了他們的電子郵件地址
+    // if (!existingUser.emailVerified) {
+    //   return next(appError(400, "請先驗證您的電子郵件"));
+    // }
+
+    // 檢查用戶是否為管理員
+    if (!existingUser.isAdmin) {
+      return next(appError(400, "您不是管理員"));
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+    const auth = await bcrypt.compare(password, user.password);
+    if (!auth) {
+      return next(appError(400, "您的密碼不正確"));
+    }
+    generateSendJWT(user, 200, res);
+  },
+
+  // 使用管理員密碼新增後台管理員帳號
+  adminCreateUser: async function (req, res, next) {
+    const email = req.body.email;
+    const name = req.body.name;
+    const adminPassword = req.body.adminPassword;
+    let password = req.body.password;
+
+    if (!email || !password || !name || !adminPassword) {
+      return next(appError(400, "帳號密碼不可為空"));
+    }
+
+    // 檢查管理員密碼是否正確
+    const correctAdminPassword = process.env.ADMIN_PASSWORD;
+    if (adminPassword !== correctAdminPassword) {
+      return next(appError("401", "管理員密碼錯誤！"));
+    }
+
+    // 檢查 email 是否存在
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return next(appError(400, "該 email 已經被註冊"));
+    }
+
+    // 加密密碼
+    password = await bcrypt.hash(password, 12);
+
+    const newUser = await User.create({
+      email,
+      password,
+      name,
+      isAdmin: true,
+    });
+
+    generateSendJWT(newUser, 200, res, "新增管理員成功");
+  },
 };
 // http://localhost:3666/users/google/callback
 
