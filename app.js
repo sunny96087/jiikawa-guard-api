@@ -66,6 +66,7 @@ const uploadRouter = require("./routes/upload");
 const emailRouter = require("./routes/email");
 const announcementsRouter = require("./routes/announcements");
 const lineWebhookRouter = require("./routes/lineWebhook");
+const picdataRouter = require("./routes/picdata");
 
 // 預設首頁
 var indexRouter = require("./routes/index");
@@ -111,7 +112,7 @@ app.use("/upload", uploadRouter);
 app.use("/email", emailRouter);
 app.use("/announcements", announcementsRouter);
 app.use("/lineWebhook", lineWebhookRouter);
-
+app.use("/picdata", picdataRouter);
 app.use((req, res, next) => {
   // 設置 CSP 頭部
   res.setHeader(

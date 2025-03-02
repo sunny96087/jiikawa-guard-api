@@ -11,6 +11,7 @@
     "swagger": "node ./swagger.js"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
     "@line/bot-sdk": "^9.2.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
