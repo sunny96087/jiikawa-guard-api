@@ -51,8 +51,36 @@ const picdataController = {
     let query = {};
 
     // 根據角色過濾
-    if (role && role !== "all_chiikawa") {
-      query.role = role;
+    if (role) {
+      if (role === "all_chiikawa") {
+        query.role = {
+          $in: [
+            "chiikawa",
+            "hachiware",
+            "usagi",
+            "momonga",
+            "kurimanjuu",
+            "rakko",
+            "shisa",
+            "kani",
+            "ano_ko",
+            "daistrong",
+            "sou",
+            "chimera",
+            "yoroisan",
+            "kabutomushi",
+            "yousei",
+            "hoshi",
+            "others_chiikawa",
+          ],
+        };
+      } else if (role === "all_nagano") {
+        query.role = {
+          $in: ["polar_bear", "croquette", "sausage", "pug"],
+        };
+      } else {
+        query.role = role;
+      }
     }
 
     // 根據系列過濾
@@ -75,6 +103,9 @@ const picdataController = {
       query.$or = [
         { name: { $regex: keyword, $options: "i" } },
         { nickname: { $regex: keyword, $options: "i" } },
+        { role: { $regex: keyword, $options: "i" } },
+        { series: { $regex: keyword, $options: "i" } },
+        { category: { $regex: keyword, $options: "i" } },
       ];
     }
 
@@ -107,9 +138,9 @@ const picdataController = {
     }
 
     // 檢查圖片資料
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      return next(appError(400, "至少需要一張圖片"));
-    }
+    // if (!images || !Array.isArray(images) || images.length === 0) {
+    //   return next(appError(400, "至少需要一張圖片"));
+    // }
 
     // 更新圖鑑
     const updatedPicData = await PicData.findByIdAndUpdate(
