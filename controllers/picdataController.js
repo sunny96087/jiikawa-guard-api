@@ -45,14 +45,49 @@ const picdataController = {
   // 取得所有圖鑑資料
   getAllPicData: async function (req, res, next) {
     // 從請求中獲取參數
-    const { role, series, category, isShow, keyword } = req.query;
+    const {
+      role,
+      series,
+      category,
+      isShow,
+      keyword,
+      page = 1,
+      limit = 10,
+    } = req.query;
 
     // 初始化查詢對象
     let query = {};
 
     // 根據角色過濾
     if (role) {
-      if (role === "all_chiikawa") {
+      if (role === "all") {
+        query.role = {
+          $in: [
+            "chiikawa",
+            "hachiware",
+            "usagi",
+            "momonga",
+            "kurimanjuu",
+            "rakko",
+            "shisa",
+            "kani",
+            "ano_ko",
+            "daistrong",
+            "sou",
+            "chimera",
+            "yoroisan",
+            "kabutomushi",
+            "yousei",
+            "hoshi",
+            "others_chiikawa",
+            "polar_bear",
+            "croquette",
+            "sausage",
+            "pug",
+            "others_nagano",
+          ],
+        };
+      } else if (role === "all_chiikawa") {
         query.role = {
           $in: [
             "chiikawa",
@@ -76,7 +111,7 @@ const picdataController = {
         };
       } else if (role === "all_nagano") {
         query.role = {
-          $in: ["polar_bear", "croquette", "sausage", "pug"],
+          $in: ["polar_bear", "croquette", "sausage", "pug", "others_nagano"],
         };
       } else {
         query.role = role;
@@ -112,7 +147,20 @@ const picdataController = {
     // 從新到舊排序
     const sortOption = { createdAt: -1 };
 
-    const picDataList = await PicData.find(query).sort(sortOption);
+    // 計算總筆數
+    const total = await PicData.countDocuments(query);
+
+    // 計算總頁數
+    const totalPages = Math.ceil(total / limit);
+
+    // 計算要跳過的數量
+    const skip = (page - 1) * limit;
+
+    // 取得分頁後的資料
+    const picDataList = await PicData.find(query)
+      .sort(sortOption)
+      .skip(skip)
+      .limit(Number(limit));
 
     // 格式化時間
     const formattedPicDataList = picDataList.map((picData) => {
@@ -124,7 +172,20 @@ const picdataController = {
       };
     });
 
-    handleSuccess(res, formattedPicDataList, "取得所有圖鑑資料成功");
+    // 回傳資料包含分頁資訊
+    handleSuccess(
+      res,
+      {
+        data: formattedPicDataList,
+        pagination: {
+          total, // 總筆數
+          totalPages, // 總頁數
+          currentPage: Number(page), // 當前頁數
+          limit: Number(limit), // 每頁筆數
+        },
+      },
+      "取得圖鑑資料成功"
+    );
   },
 
   // 編輯圖鑑
