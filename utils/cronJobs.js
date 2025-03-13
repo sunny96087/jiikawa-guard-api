@@ -70,7 +70,7 @@ const checkRobotAlive = async () => {
  */
 
 // 定時任務：每5分鐘執行一次機器人存活檢查
-cron.schedule("*/1 * * * *", () => {
+cron.schedule("*/5 * * * *", () => {
   checkRobotAlive()
     .then((message) => console.log("伺服器存活檢查完成", message))
     .catch((error) => console.error("伺服器存活檢查失敗:", error));
