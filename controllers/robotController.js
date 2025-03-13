@@ -1,13 +1,15 @@
 const handleSuccess = require("../utils/handleSuccess");
 
 const robotController = {
-  // 檢查機器人存活狀態
+  // 檢查伺服器存活狀態 (API 端點使用)
   checkAlive: async function (req, res, next) {
-    handleSuccess(res, null, "Robot is alive");
+    handleSuccess(res, null, "Server is alive");
   },
   
-  // 未來可以在這裡添加其他機器人相關的功能
-  // 例如：機器人狀態記錄、運行統計等
+  // 內部檢查伺服器存活狀態 (定時任務使用)
+  checkAliveInternal: async function () {
+    return "Server is alive";
+  }
 };
 
 module.exports = robotController; 
