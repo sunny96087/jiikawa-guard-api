@@ -57,7 +57,7 @@ mongoose
   });
 
 // 啟動定時任務
-deleteExpiredAccounts();
+// deleteExpiredAccounts();
 
 // 引入自訂路由 routes
 const postsRouter = require("./routes/posts");
